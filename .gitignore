@@ -1,0 +1,4 @@
+.env
+
+# SQL Server files
+s2n Db.sql
