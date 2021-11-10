@@ -1,4 +1,6 @@
+node_modules
 .env
+package-lock.json
 
 # SQL Server files
 s2n Db.sql
