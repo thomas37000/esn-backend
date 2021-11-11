@@ -1,14 +1,22 @@
-const http = require('http');
+const express = require("express");
+const PORT = 8080;
+const app = express();
 
-const hostname = '127.0.0.1';
-const port = 8080;
+const cors = require("cors");
 
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World');
+const s2nRouter = require("./src/controller/s2n.controller");
+
+app.listen(PORT, (err) => {
+  if (err) {
+    console.error(err);
+  } else {
+    console.log(`Express server listening on ${PORT}`);
+  }
 });
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+// middlewares
+app.use(cors({ origin: process.env.CLIENT_URL }));
+app.use(express.json());
+app.use("/", s2nRouter);
+
+

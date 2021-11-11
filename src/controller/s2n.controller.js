@@ -5,7 +5,8 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
   connection.query(
-    "SELECT * from entreprises ORDER BY name ASC",
+    // "SELECT * FROM entreprises ORDER BY s2n_name ASC",
+    "SELECT s2n_name, created_at, images, infos, citie_name FROM entreprises LEFT JOIN cities ON cities.idCities = entreprises.cities_id ORDER BY s2n_name ASC",
     (err, results) => {
       if (err) {
         console.log(err);
@@ -18,6 +19,5 @@ router.get("/", (req, res) => {
     }
   );
 });
-
 
 module.exports = router;
