@@ -29,10 +29,10 @@ router.get("/", (req, res) => {
 // )
 
 router.post("/", (req, res) => {
-  const { citie_name, created_at, images, infos, s2n_name, rate } = req.body;
+  const { cities_id, created_at, images, infos, s2n_name, rate } = req.body;
   connection.query(
-    "INSERT INTO entreprises (created_at, images, infos, s2n_name, rate) VALUES (?, ?, ?, ?, ?)",
-    [citie_name, created_at, images, infos, s2n_name, rate],
+    "INSERT INTO entreprises (s2n_name, infos, rate, cities_id, created_at, images) VALUES (?, ?, ?, ?, ?, ?)",
+    [s2n_name, infos, rate, cities_id, created_at, images],
     (error) => {
       if (error) {
         console.log("test", error);
