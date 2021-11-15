@@ -2,11 +2,14 @@ const express = require("express");
 const connection = require("../../config/config");
 
 const router = express.Router();
+// SELECT `titre`, `date_publication`, GROUP_CONCAT(`mot` SEPARATOR " ") AS concat_mot
+// FROM `article`
+// LEFT JOIN `mot_cle` ON `article_id` = `article`.`id`
+// GROUP BY `article`.`id`
 
 router.get("/", (req, res) => {
   connection.query(
-    // "SELECT * FROM entreprises ORDER BY s2n_name ASC",
-    "SELECT * FROM entreprises LEFT JOIN cities ON cities.idCities = entreprises.cities_id ORDER BY s2n_name ASC",
+    "SELECT * FROM entreprises AS e JOIN cities AS c ON c.idCities = e.cities_id JOIN technos AS t ON t.idTechnos = e.technos_id ORDER BY s2n_name ASC",
     (err, results) => {
       if (err) {
         console.log(err);
@@ -28,11 +31,17 @@ router.get("/", (req, res) => {
 //   INNER JOIN Nametable a ON b.no = a.no
 // )
 
+
+// INSERT INTO user (id, name, username, opted_in)
+//   SELECT id, name, username, opted_in 
+//   FROM user LEFT JOIN user_permission AS userPerm ON user.id = userPerm.user_id
+
 router.post("/", (req, res) => {
-  const { cities_id, created_at, images, infos, s2n_name, rate } = req.body;
+  const { created_at, images, infos, s2n_name, rate } = req.body;
   connection.query(
-    "INSERT INTO entreprises (s2n_name, infos, rate, cities_id, created_at, images) VALUES (?, ?, ?, ?, ?, ?)",
-    [s2n_name, infos, rate, cities_id, created_at, images],
+    // "INSERT INTO entreprises (s2n_name, infos, rate, created_at, images) SELECT s2n_name, infos, rate, created_at, images FROM entreprises LEFT JOIN cities AS c ON c.idCities = c.citie_name  ",
+    "INSERT INTO entreprises (s2n_name, infos, rate, created_at, images)  VALUES ( ?, ?, ?, ?, ?)",
+    [s2n_name, infos, rate, created_at, images],
     (error) => {
       if (error) {
         console.log("test", error);
