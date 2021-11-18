@@ -23,6 +23,22 @@ router.get("/", (req, res) => {
   );
 });
 
+router.get('/:id', (req, res) => {
+  connection.query(
+    'SELECT * FROM entreprises WHERE idEntreprises = ?',
+    [req.params.id],
+    (err, results) => {
+      if (err) {
+        res.status(500).json(err);
+      } else if (results.length < 1) {
+        res.status(404).send('s2n inconnu(e)!');
+      } else {
+        res.status(200).json(results[0]);
+      }
+    }
+  );
+});
+
 // INSERT INTO Test([col1],[col2]) (
 //   SELECT
 //       a.Name AS [col1],
