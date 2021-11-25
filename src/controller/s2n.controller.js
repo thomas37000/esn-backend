@@ -2,10 +2,6 @@ const express = require("express");
 const connection = require("../../config/config");
 
 const router = express.Router();
-// SELECT `titre`, `date_publication`, GROUP_CONCAT(`mot` SEPARATOR " ") AS concat_mot
-// FROM `article`
-// LEFT JOIN `mot_cle` ON `article_id` = `article`.`id`
-// GROUP BY `article`.`id`
 
 router.get("/", (req, res) => {
   connection.query(
