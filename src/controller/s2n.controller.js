@@ -3,25 +3,25 @@ const connection = require("../../config/config");
 
 const router = express.Router();
 
-// router.get("/", (req, res) => {
-//   connection.query(
-//     "SELECT * FROM entreprises ORDER BY s2n_name ASC",
-//     (err, results) => {
-//       if (err) {
-//         console.log(err);
-//         res.status(500).json(err);
-//       } else if (results.length < 1) {
-//         res.status(404).send("il n 'y a pas d' entreprises ici !");
-//       } else {
-//         res.status(200).json(results);
-//       }
-//     }
-//   );
-// });
-
 router.get("/", (req, res) => {
-  res.send("c'est bon !");
+  connection.query(
+    "SELECT * FROM entreprises ORDER BY s2n_name ASC",
+    (err, results) => {
+      if (err) {
+        console.log(err);
+        res.status(500).json(err);
+      } else if (results.length < 1) {
+        res.status(404).send("il n 'y a pas d' entreprises ici !");
+      } else {
+        res.status(200).json(results);
+      }
+    }
+  );
 });
+
+// router.get("/", (req, res) => {
+//   res.send("c'est bon !");
+// });
 
 // router.get("/:id", (req, res) => {
 //   connection.query(
