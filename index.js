@@ -5,6 +5,7 @@ const app = express();
 const cors = require("cors");
 
 const s2nRouter = require("./src/controller/s2n.controller");
+const s2nRouterById = require("./src/controller/s2n.controller");
 
 app.listen(PORT, (err) => {
   if (err) {
@@ -18,5 +19,7 @@ app.listen(PORT, (err) => {
 app.use(cors({ origin: process.env.CLIENT_URL }));
 app.use(express.json());
 app.use("/", s2nRouter);
+app.use("/s2n", s2nRouterById);
+app.use("/s2n-api", s2nRouter);
 
 

@@ -2,14 +2,10 @@ const express = require("express");
 const connection = require("../../config/config");
 
 const router = express.Router();
-// SELECT `titre`, `date_publication`, GROUP_CONCAT(`mot` SEPARATOR " ") AS concat_mot
-// FROM `article`
-// LEFT JOIN `mot_cle` ON `article_id` = `article`.`id`
-// GROUP BY `article`.`id`
 
 router.get("/", (req, res) => {
   connection.query(
-    "SELECT * FROM entreprises AS e JOIN cities AS c ON c.idCities = e.cities_id JOIN technos AS t ON t.idTechnos = e.technos_id ORDER BY s2n_name ASC",
+    "SELECT * FROM entreprises ORDER BY s2n_name ASC",
     (err, results) => {
       if (err) {
         console.log(err);
@@ -18,6 +14,22 @@ router.get("/", (req, res) => {
         res.status(404).send("il n 'y a pas d' entreprises ici !");
       } else {
         res.status(200).json(results);
+      }
+    }
+  );
+});
+
+router.get('/:id', (req, res) => {
+  connection.query(
+    'SELECT * FROM entreprises WHERE idEntreprises = ?',
+    [req.params.id],
+    (err, results) => {
+      if (err) {
+        res.status(500).json(err);
+      } else if (results.length < 1) {
+        res.status(404).send('s2n inconnu(e)!');
+      } else {
+        res.status(200).json(results[0]);
       }
     }
   );
@@ -37,18 +49,18 @@ router.get("/", (req, res) => {
 //   FROM user LEFT JOIN user_permission AS userPerm ON user.id = userPerm.user_id
 
 router.post("/", (req, res) => {
-  const { created_at, images, infos, s2n_name, rate } = req.body;
+  const {  images, infos, s2n_name, rate, year } = req.body;
   connection.query(
-    // "INSERT INTO entreprises (s2n_name, infos, rate, created_at, images) SELECT s2n_name, infos, rate, created_at, images FROM entreprises LEFT JOIN cities AS c ON c.idCities = c.citie_name  ",
-    "INSERT INTO entreprises (s2n_name, infos, rate, created_at, images)  VALUES ( ?, ?, ?, ?, ?)",
-    [s2n_name, infos, rate, created_at, images],
-    (error) => {
+    // "INSERT INTO entreprises (s2n_name, infos, rate,  images) SELECT s2n_name, infos, rate,  images FROM entreprises LEFT JOIN cities AS c ON c.idCities = c.citie_name  ",
+    "INSERT INTO entreprises (s2n_name, infos, rate,  images, year)  VALUES ( ?, ?, ?, ?, ? )",
+    [s2n_name, infos, rate,  images, year],
+    (error, results) => {
       if (error) {
         console.log("test", error);
         res.status(500).json({ error: error });
-      } else {
+      } else {        
         res.status(200).json({
-          id: result.insertId,
+          id: results.insertId,
           ...req.body,
         });
       }
