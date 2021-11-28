@@ -3,7 +3,25 @@ const connection = require("../../config/config");
 
 const router = express.Router();
 
-router.post("/login", (req, res) => {
+router.post("/sign-in", (req, res) => {
+    const { email, password } = req.body;
+  connection.query(
+    "INSERT INTO users (email, password) VALUES ( ?, ? )",
+    [email, password],
+    (error, results) => {
+      if (error) {
+        res.status(500).json({ error: error });
+      } else {
+        res.status(200).json({
+          id: results.insertId,
+          ...req.body,
+        });
+      }
+    }
+  );
+});
+
+router.post("/sign-in", (req, res) => {
   const { email, password } = req.body;
   // le ? est remplaçé par l' email du user
   connection.query(
