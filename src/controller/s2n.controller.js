@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
   connection.query(
-    "SELECT * FROM entreprises ORDER BY s2n_name ASC",
+    "SELECT * FROM entreprises AS e INNER JOIN cities AS c ON c.idCities = e.idEntreprises RIGHT OUTER JOIN technos AS t ON t.idTechnos = e.idEntreprises ORDER BY s2n_name ASC",
     (err, results) => {
       if (err) {
         console.log(err);
@@ -21,7 +21,7 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res) => {
   connection.query(
-    "SELECT * FROM entreprises WHERE idEntreprises = ?",
+    "SELECT * FROM entreprises INNER JOIN cities ON cities.idCities = entreprises.idEntreprises WHERE idEntreprises = ?",
     [req.params.id],
     (err, results) => {
       if (err) {
@@ -69,13 +69,17 @@ router.post("/", (req, res) => {
 
 router.delete("/:id", (req, res) => {
   const idS2n = req.params.id;
-  connection.query("DELETE FROM entreprises WHERE idEntreprises = ?", [idS2n], (err) => {
-    if (err) {
-      res.status(500).send("la suppression n' a pas marché !");
-    } else {
-      res.status(200).send("s2n bien supprimée");
+  connection.query(
+    "DELETE FROM entreprises WHERE idEntreprises = ?",
+    [idS2n],
+    (err) => {
+      if (err) {
+        res.status(500).send("la suppression n' a pas marché !");
+      } else {
+        res.status(200).send("s2n bien supprimée");
+      }
     }
-  });
+  );
 });
 
 module.exports = router;
