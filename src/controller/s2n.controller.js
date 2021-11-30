@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
   connection.query(
-    "SELECT * FROM entreprises AS e INNER JOIN cities AS c ON c.idCities = e.idEntreprises RIGHT OUTER JOIN technos AS t ON t.idTechnos = e.idEntreprises ORDER BY s2n_name ASC",
+    "SELECT * FROM entreprises AS e INNER JOIN cities AS c ON c.idCities = e.idEntreprises LEFT OUTER JOIN technos AS t ON t.idTechnos = e.idEntreprises ORDER BY s2n_name ASC",
     (err, results) => {
       if (err) {
         console.log(err);
@@ -21,7 +21,7 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res) => {
   connection.query(
-    "SELECT * FROM entreprises INNER JOIN cities ON cities.idCities = entreprises.idEntreprises WHERE idEntreprises = ?",
+    "SELECT * FROM entreprises AS e INNER JOIN cities AS c ON c.idCities = e.idEntreprises LEFT OUTER JOIN technos AS t ON t.idTechnos = e.idEntreprises WHERE idEntreprises = ?",
     [req.params.id],
     (err, results) => {
       if (err) {
