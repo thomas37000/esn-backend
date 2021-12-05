@@ -5,7 +5,8 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
   connection.query(
-    "SELECT * FROM entreprises AS e INNER JOIN cities AS c ON c.idCities = e.idEntreprises LEFT OUTER JOIN technos AS t ON t.idTechnos = e.idEntreprises ORDER BY s2n_name ASC",
+    `SELECT * FROM entreprises AS e 
+      ORDER BY s2n_name ASC`,
     (err, results) => {
       if (err) {
         console.log(err);
@@ -51,7 +52,7 @@ router.post("/", (req, res) => {
   const { images, infos, s2n_name, rate, year } = req.body;
   connection.query(
     // "INSERT INTO entreprises (s2n_name, infos, rate,  images) SELECT s2n_name, infos, rate,  images FROM entreprises LEFT JOIN cities AS c ON c.idCities = c.citie_name  ",
-    "INSERT INTO entreprises (s2n_name, infos, rate,  images, year)  VALUES ( ?, ?, ?, ?, ? )",
+    "INSERT INTO entreprises (s2n_name, infos, rate,  images, year) VALUES ( ?, ?, ?, ?, ? )",
     [s2n_name, infos, rate, images, year],
     (error, results) => {
       if (error) {
@@ -77,6 +78,24 @@ router.delete("/:id", (req, res) => {
         res.status(500).send("la suppression n' a pas marché !");
       } else {
         res.status(200).send("s2n bien supprimée");
+      }
+    }
+  );
+});
+
+router.put("/s2n/:id", (req, res) => {
+  const idS2n = req.params.id;
+  const newS2n = req.body;
+  // req.body permet de modifier toutes les valeurs au lieu de faire comme const {} = req.body
+  // const { images, infos, s2n_name, rate, year } = req.body;
+  connection.query(
+    `UPDATE entreprises SET ? WHERE idEntreprises = ?`,
+    [newS2n, idS2n],
+    (error, result) => {
+      if (error) {
+        res.status(500).json({ errorMessage: error.message });
+      } else {
+        res.status(200).json({ ...req.body });
       }
     }
   );
