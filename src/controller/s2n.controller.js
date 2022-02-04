@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
   connection.query(
-    `SELECT * FROM entreprises AS e 
+    `SELECT * FROM entreprises AS e
       ORDER BY s2n_name ASC`,
     (err, results) => {
       if (err) {
@@ -22,7 +22,19 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res) => {
   connection.query(
-    "SELECT * FROM entreprises AS e INNER JOIN cities AS c ON c.idCities = e.idEntreprises LEFT OUTER JOIN technos AS t ON t.idTechnos = e.idEntreprises WHERE idEntreprises = ?",
+
+    // error
+    // sqlMessage: "Column 'idEntreprises' in where clause is ambiguous"
+
+    // `SELECT * FROM entreprises AS e 
+    // INNER JOIN entreprise_technos AS et
+    //   ON e.IdEntreprises = et.idEntreprises
+    // INNER JOIN technos AS t
+    //   ON et.IdTechnos = t.idTechnos
+    // WHERE idEntreprises = ?`,
+
+    `SELECT * FROM entreprises AS e 
+      WHERE idEntreprises = ?`,
     [req.params.id],
     (err, results) => {
       if (err) {
@@ -49,14 +61,19 @@ router.get("/:id", (req, res) => {
 //   FROM user LEFT JOIN user_permission AS userPerm ON user.id = userPerm.user_id
 
 router.post("/", (req, res) => {
-  const { images, infos, s2n_name, rate, year } = req.body;
+  const { images, infos, s2n_name, rate, year, citie_name } = req.body;
   connection.query(
-    // "INSERT INTO entreprises (s2n_name, infos, rate,  images) SELECT s2n_name, infos, rate,  images FROM entreprises LEFT JOIN cities AS c ON c.idCities = c.citie_name  ",
-    "INSERT INTO entreprises (s2n_name, infos, rate,  images, year) VALUES ( ?, ?, ?, ?, ? )",
-    [s2n_name, infos, rate, images, year],
+     "INSERT INTO entreprises (s2n_name, infos, rate, images, year, citie_name) VALUES ( ?, ?, ?, ?, ?, ? )",
+
+    // `INSERT INTO entreprises AS e (s2n_name, infos, rate, images, year, citie_name)
+    //   SELECT CONCAT(e.s2n_name,' ',e.infos,' ',e.rate, ' ',e.images,' ', e.year,' ', e.citie_name) FROM e
+    //     INNER JOIN technos As t ON t.idTechnos=e.IdEntreprises
+    //   WHERE e.IdEntreprises= ?`,
+
+    [s2n_name, infos, rate, images, year, citie_name],
     (error, results) => {
       if (error) {
-        console.log("test", error);
+        console.log("error", error);
         res.status(500).json({ error: error });
       } else {
         res.status(200).json({
@@ -87,7 +104,6 @@ router.put("/s2n/:id", (req, res) => {
   const idS2n = req.params.id;
   const newS2n = req.body;
   // req.body permet de modifier toutes les valeurs au lieu de faire comme const {} = req.body
-  // const { images, infos, s2n_name, rate, year } = req.body;
   connection.query(
     `UPDATE entreprises SET ? WHERE idEntreprises = ?`,
     [newS2n, idS2n],
