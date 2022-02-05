@@ -6,6 +6,10 @@ const router = express.Router();
 router.get("/", (req, res) => {
   connection.query(
     `SELECT * FROM entreprises AS e
+      INNER JOIN entreprise_technos AS et
+        ON e.idEntreprises = et.identreprise
+      INNER JOIN technos AS t
+        ON et.idtechno = t.idTechnos
       ORDER BY s2n_name ASC`,
     (err, results) => {
       if (err) {
@@ -22,18 +26,11 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res) => {
   connection.query(
-
-    // error
-    // sqlMessage: "Column 'idEntreprises' in where clause is ambiguous"
-
-    // `SELECT * FROM entreprises AS e 
-    // INNER JOIN entreprise_technos AS et
-    //   ON e.IdEntreprises = et.idEntreprises
-    // INNER JOIN technos AS t
-    //   ON et.IdTechnos = t.idTechnos
-    // WHERE idEntreprises = ?`,
-
-    `SELECT * FROM entreprises AS e 
+    `SELECT * FROM entreprises AS e
+      INNER JOIN entreprise_technos AS et
+        ON e.idEntreprises = et.identreprise
+      INNER JOIN technos AS t
+        ON et.idtechno = t.idTechnos
       WHERE idEntreprises = ?`,
     [req.params.id],
     (err, results) => {
@@ -63,7 +60,7 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   const { images, infos, s2n_name, rate, year, citie_name } = req.body;
   connection.query(
-     "INSERT INTO entreprises (s2n_name, infos, rate, images, year, citie_name) VALUES ( ?, ?, ?, ?, ?, ? )",
+    "INSERT INTO entreprises (s2n_name, infos, rate, images, year, citie_name) VALUES ( ?, ?, ?, ?, ?, ? )",
 
     // `INSERT INTO entreprises AS e (s2n_name, infos, rate, images, year, citie_name)
     //   SELECT CONCAT(e.s2n_name,' ',e.infos,' ',e.rate, ' ',e.images,' ', e.year,' ', e.citie_name) FROM e
