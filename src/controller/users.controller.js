@@ -4,7 +4,7 @@ const connection = require("../../config/config");
 const router = express.Router();
 
 router.post("/sign-up", (req, res) => {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
   connection.query(
     "INSERT INTO users (email, password) VALUES ( ?, ? )",
     [email, password],
@@ -51,6 +51,22 @@ router.get("/login", (req, res) => {
       } else {
         // 403 il n'a pas le droit de se connecter
         res.status(403).json({ errorMessage: "email incorrect !" });
+      }
+    }
+  );
+});
+
+router.get("/:id", (req, res) => {
+  connection.query(
+    "SELECT * FROM users WHERE idUsers = ?",
+    [req.params.id],
+    (err, results) => {
+      if (err) {
+        res.status(500).json(err);
+      } else if (results.length < 1) {
+        res.status(404).send("user inconnu(e)!");
+      } else {
+        res.status(200).json(results[0]);
       }
     }
   );
