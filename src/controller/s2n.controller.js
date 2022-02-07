@@ -6,11 +6,15 @@ const router = express.Router();
 router.get("/", (req, res) => {
   connection.query(
     `SELECT * FROM entreprises AS e
-      INNER JOIN entreprise_technos AS et
-        ON e.idEntreprises = et.identreprise
+      INNER JOIN entreprises_technos AS et
+        ON e.idEntreprises = et.entreprises_id
       INNER JOIN technos AS t
-        ON et.idtechno = t.idTechnos
-      ORDER BY s2n_name ASC`,
+        ON et.technos_id = t.idTechnos
+      INNER JOIN entreprises_cities AS ec
+        ON e.idEntreprises = ec.id_entreprises
+      INNER JOIN cities AS c
+        ON ec.cities_id = c.idCities
+     ORDER BY s2n_name ASC`,
     (err, results) => {
       if (err) {
         console.log(err);
@@ -27,11 +31,15 @@ router.get("/", (req, res) => {
 router.get("/:id", (req, res) => {
   connection.query(
     `SELECT * FROM entreprises AS e
-      INNER JOIN entreprise_technos AS et
-        ON e.idEntreprises = et.identreprise
+      INNER JOIN entreprises_technos AS et
+        ON e.idEntreprises = et.entreprises_id
       INNER JOIN technos AS t
-        ON et.idtechno = t.idTechnos
-      WHERE idEntreprises = ?`,
+        ON et.technos_id = t.idTechnos
+      INNER JOIN entreprises_cities AS ec
+        ON e.idEntreprises = ec.id_entreprises
+      INNER JOIN cities AS c
+        ON ec.cities_id = c.idCities
+     WHERE idEntreprises = ?`,
     [req.params.id],
     (err, results) => {
       if (err) {
@@ -58,16 +66,16 @@ router.get("/:id", (req, res) => {
 //   FROM user LEFT JOIN user_permission AS userPerm ON user.id = userPerm.user_id
 
 router.post("/", (req, res) => {
-  const { images, infos, s2n_name, rate, year, citie_name } = req.body;
+  const { images, infos, s2n_name, rate, year } = req.body;
   connection.query(
-    "INSERT INTO entreprises (s2n_name, infos, rate, images, year, citie_name) VALUES ( ?, ?, ?, ?, ?, ? )",
+    "INSERT INTO entreprises (s2n_name, infos, rate, images, year) VALUES ( ?, ?, ?, ?, ? )",
 
     // `INSERT INTO entreprises AS e (s2n_name, infos, rate, images, year, citie_name)
     //   SELECT CONCAT(e.s2n_name,' ',e.infos,' ',e.rate, ' ',e.images,' ', e.year,' ', e.citie_name) FROM e
     //     INNER JOIN technos As t ON t.idTechnos=e.IdEntreprises
     //   WHERE e.IdEntreprises= ?`,
 
-    [s2n_name, infos, rate, images, year, citie_name],
+    [s2n_name, infos, rate, images, year],
     (error, results) => {
       if (error) {
         console.log("error", error);
@@ -85,7 +93,7 @@ router.post("/", (req, res) => {
 router.delete("/:id", (req, res) => {
   const idS2n = req.params.id;
   connection.query(
-    "DELETE FROM entreprises WHERE idEntreprises = ?",
+     "DELETE FROM entreprises WHERE idEntreprises = ?",
     [idS2n],
     (err) => {
       if (err) {
